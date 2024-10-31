@@ -1,6 +1,6 @@
 ---
 title: "assignment-b1-mbeletsky"
-output: html_document
+output: github_document
 date: "2024-10-30"
 ---
 
@@ -14,7 +14,7 @@ library(tidyverse)
 library(testthat)
 ```
 
-I've included "datateachr" so that we have access to the "vancouver_trees" dataset I'll be using as an example. 
+I've included "datateachr" so that we have access to the "vancouver_trees" dataset I'll be using as an example. We'll be using "tidyverse" to take advantage of the "dplyr" package. I've loaded "testthat" for the tests we're going to run later on the package created in this assignment. 
 
 # Exercises 1 and 2: Make and Document a Function
 
