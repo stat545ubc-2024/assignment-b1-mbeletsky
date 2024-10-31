@@ -1,0 +1,141 @@
+---
+title: "assignment-b1-mbeletsky"
+output: html_document
+date: "2024-10-30"
+---
+
+# Setup
+
+First, we'll load all the packages that we'll be using. 
+
+```{r}
+library(datateachr)
+library(tidyverse)
+library(ggplot2)
+library(testthat)
+```
+
+I've included "datateachr" so that we have access to the "vancouver_trees" dataset I'll be using as an example. 
+
+
+# Exercises 1 and 2: Make and Document a Function
+
+I will make a function that bundles a specific group_by() %>% summarize() workflow.
+
+I want to turn the following workflow into a function: counting how many unique observations there are for a variable.
+
+```{r}
+exercise1_example <- vancouver_trees %>%
+  group_by(neighbourhood_name) %>%
+  summarize(n_species = n_distinct(species_name))
+print(exercise1_example)
+```
+Here, we have grouped the "vancouver_trees" dataset by neighbourhood and then summarized how many different species of tree there are in each neighbourhood. This workflow could also be useful for: counting how many genera there are per neighbourhood, or counting how many species there are in each genus.
+
+Now, I will make a function that can accomplish this workflow. 
+
+```{r}
+#' @title Group by, then summarize unique observations
+#' @description Group your dataset by one variable, then summarize counts of unique observations for another variable. Rows will be sorted from highest counts to lowest. 
+#' @param {Object} data - A dataframe you are working with. I named this argument "data" to keep things simple and to the point, and for existing functions, it's common for the argument "data" to be a dataframe. 
+#' @param {Object} group_var - The variable (column) you wish to group your data by. I named this argument "group_var" because it's the variable (var) you are wanting to group by (group) and to distinguish it easily from the other variable we are using as an argument. 
+#' @param {Object} count_var - The variable (column) you wish to count unique observations for. I named this argument "count_var" because it's the variable (var) you are wanting to count unique observations in (count) and to distinguish it easily from the other variable we are using as an argument. 
+#' @return Tibble that shows counts of unique observations within one variable, for each group you specify. 
+group_then_sumz <- function(data, group_var, count_var) {
+  table <- data %>%
+    drop_na({{ group_var }}) %>%
+    group_by({{ group_var }}) %>%
+    drop_na({{ count_var }}) %>%
+    summarize(n_distinct = n_distinct({{ count_var }})) %>%
+    arrange(desc(n_distinct))
+print(table)
+}
+```
+
+Here I've made a function called **group_then_sumz()** that takes in the arguments "data" (a dataframe), "group_var" (name of the column you want to group by), and "count_var" (name of the column you want to count unique observations for). It outputs a tibble that shows you unique counts for your variable of interest grouped by your other variable of interest, and sorts the counts from high to low. 
+
+# Exercise 3: Examples
+
+## Group by neighbourhood, count unique species
+
+It's time to show this function in action. Let's begin by grouping by neighbourhood and counting unique species. 
+
+```{r}
+group_then_sumz(vancouver_trees, neighbourhood_name, species_name)
+```
+Here we have a nice table showing how many distinct tree species there are in each Vancouver neighbourhood. We find out that Hastings-Sunrise, Kitsilano, and Renfrew-Collingwood have the most unique tree species while Fairview and Downtown have the least. 
+
+## Group by genus, count unique species
+
+For the next example, let's group by genus and count how many distinct tree species there are in Vancouver that belong to each genus. 
+
+```{r}
+group_then_sumz(vancouver_trees, genus_name, species_name)
+```
+Now we have a nice table showing how many distinct tree species there are in Vancouver in each genus. The genera with the most unique species found in Vancouver are Acer, Prunus, and Magnolia.
+
+## Group by genera, count unique cultivars
+
+For this example, we will group by genus again and count how many cultivars there are in Vancouver in each genus.
+
+```{r}
+group_then_sumz(vancouver_trees, genus_name, cultivar_name)
+```
+Now that we've grouped by genus and summarized unique cultivars, we see that Acer, Prunus, and Magnolia have the most unique cultivars within them. 
+
+# Exercise 4: Test the Function
+
+Now, we will make sure the function is working as it's supposed to by running tests. 
+
+## Test 1: expect_is()
+
+Within our function, we print out a tibble with the results which should also be a function because the output depends on the input data and variables. We can test if the function **group_then_sumz** and the output object "table" are indeed functions by using **expect_is()** and using the arguments object and "function". 
+
+```{r}
+test_that("group_then_sumz and table are functions", {
+expect_is(group_then_sumz, "function")
+expect_is(table, "function")
+})
+```
+
+The test passes, so we have confirmed that **group_then_sumz()** and "table" are both functions. 
+
+## Test 2: expect_no_error()
+
+We can use the test function **expect_no_error** to check that with several non-redundant vector types, we don't run into any error messages.  
+
+```{r}
+
+test_that("different input variables produce no errors", {
+
+# Vectors with no NA's
+expect_no_error(group_then_sumz(vancouver_trees, neighbourhood_name, species_name), message = NULL, class = NULL)
+
+# Vector with NA's
+expect_no_error(group_then_sumz(vancouver_trees, genus_name, cultivar_name), message = NULL, class = NULL)
+
+# Vector of different type (date)
+expect_no_error(group_then_sumz(vancouver_trees, neighbourhood_name, date_planted), message = NULL, class = NULL)
+
+# Vector of different type (numeric)
+expect_no_error(group_then_sumz(vancouver_trees, neighbourhood_name, on_street_block), message = NULL, class = NULL)
+
+})
+```
+
+I've tested the function with four different inputs: vectors with no NA's (neighbourhood_name and species_name), vector with NA's (cultivar_name), a date vector (date_planted), and a numeric vector (on_street_block). The test passed, meaning none of these input variables that we might be interested in generate an error when the function is run. 
+
+## Test 3: expect_output()
+
+We can use the test function **expect_output()** to test that our function is outputting the "table" tibble, as we want it to. 
+
+```{r}
+test_that("function produces output table", {
+expect_output(
+  group_then_sumz(vancouver_trees, neighbourhood_name, species_name),
+  regexp = NULL
+)
+})
+```
+
+The test is passed, indicating that output is produced.
