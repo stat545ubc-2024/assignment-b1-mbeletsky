@@ -11,16 +11,14 @@ First, we'll load all the packages that we'll be using.
 ```{r}
 library(datateachr)
 library(tidyverse)
-library(ggplot2)
 library(testthat)
 ```
 
 I've included "datateachr" so that we have access to the "vancouver_trees" dataset I'll be using as an example. 
 
-
 # Exercises 1 and 2: Make and Document a Function
 
-I will make a function that bundles a specific group_by() %>% summarize() workflow.
+I will make a function that bundles a specific **group_by()** %>% **summarize()** workflow.
 
 I want to turn the following workflow into a function: counting how many unique observations there are for a variable.
 
@@ -63,7 +61,7 @@ It's time to show this function in action. Let's begin by grouping by neighbourh
 ```{r}
 group_then_sumz(vancouver_trees, neighbourhood_name, species_name)
 ```
-Here we have a nice table showing how many distinct tree species there are in each Vancouver neighbourhood. We find out that Hastings-Sunrise, Kitsilano, and Renfrew-Collingwood have the most unique tree species while Fairview and Downtown have the least. 
+Here we have a nice table showing how many distinct tree species there are in each Vancouver neighbourhood. We find out that Hastings-Sunrise, Kitsilano, and Renfrew-Collingwood have the most unique tree species. 
 
 ## Group by genus, count unique species
 
@@ -72,7 +70,7 @@ For the next example, let's group by genus and count how many distinct tree spec
 ```{r}
 group_then_sumz(vancouver_trees, genus_name, species_name)
 ```
-Now we have a nice table showing how many distinct tree species there are in Vancouver in each genus. The genera with the most unique species found in Vancouver are Acer, Prunus, and Magnolia.
+Now we have a nice table showing how many distinct tree species there are in Vancouver in each genus. The genera with the most unique species found in Vancouver are _Acer_, _Prunus_, and _Magnolia_.
 
 ## Group by genera, count unique cultivars
 
@@ -81,7 +79,7 @@ For this example, we will group by genus again and count how many cultivars ther
 ```{r}
 group_then_sumz(vancouver_trees, genus_name, cultivar_name)
 ```
-Now that we've grouped by genus and summarized unique cultivars, we see that Acer, Prunus, and Magnolia have the most unique cultivars within them. 
+Now that we've grouped by genus and summarized unique cultivars, we see that _Acer_, _Prunus_, and _Magnolia_ have the most unique cultivars within them. 
 
 # Exercise 4: Test the Function
 
