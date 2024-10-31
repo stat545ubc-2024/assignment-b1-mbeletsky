@@ -87,7 +87,7 @@ Now, we will make sure the function is working as it's supposed to by running te
 
 ## Test 1: expect_is()
 
-Within our function, we print out a tibble with the results which should also be a function because the output depends on the input data and variables. We can test if the function **group_then_sumz** and the output object "table" are indeed functions by using **expect_is()** and using the arguments object and "function". 
+Within our function, we print out a tibble with the results which should also be a function because the output depends on the input data and variables. We can test if the function **group_then_sumz()** and the output object "table" are indeed functions by using **expect_is()** and using the arguments object and "function". 
 
 ```{r}
 test_that("group_then_sumz and table are functions", {
@@ -100,7 +100,7 @@ The test passes, so we have confirmed that **group_then_sumz()** and "table" are
 
 ## Test 2: expect_no_error()
 
-We can use the test function **expect_no_error** to check that with several non-redundant vector types, we don't run into any error messages.  
+We can use the test function **expect_no_error()** to check that with several non-redundant vector types, we don't run into any error messages.  
 
 ```{r}
 

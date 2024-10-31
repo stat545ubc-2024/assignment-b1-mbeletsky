@@ -209,7 +209,7 @@ running tests.
 
 Within our function, we print out a tibble with the results which should
 also be a function because the output depends on the input data and
-variables. We can test if the function **group_then_sumz** and the
+variables. We can test if the function **group_then_sumz()** and the
 output object “table” are indeed functions by using **expect_is()** and
 using the arguments object and “function”.
 
@@ -220,14 +220,14 @@ expect_is(table, "function")
 })
 ```
 
-    ## Test passed 🥳
+    ## Test passed 😀
 
 The test passes, so we have confirmed that **group_then_sumz()** and
 “table” are both functions.
 
 ## Test 2: expect_no_error()
 
-We can use the test function **expect_no_error** to check that with
+We can use the test function **expect_no_error()** to check that with
 several non-redundant vector types, we don’t run into any error
 messages.
 
@@ -305,7 +305,7 @@ expect_no_error(group_then_sumz(vancouver_trees, neighbourhood_name, on_street_b
     ##  9 RILEY PARK                       61
     ## 10 ARBUTUS-RIDGE                    60
     ## # ℹ 12 more rows
-    ## Test passed 🎊
+    ## Test passed 😀
 
 I’ve tested the function with four different inputs: vectors with no
 NA’s (neighbourhood_name and species_name), vector with NA’s
@@ -328,6 +328,6 @@ expect_output(
 })
 ```
 
-    ## Test passed 🌈
+    ## Test passed 🎉
 
 The test is passed, indicating that output is produced.
