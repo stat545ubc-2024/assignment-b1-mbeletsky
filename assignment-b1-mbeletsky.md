@@ -48,8 +48,8 @@ library(testthat)
 I’ve included “datateachr” so that we have access to the
 “vancouver_trees” dataset I’ll be using as an example. We’ll be using
 “tidyverse” to take advantage of the “dplyr” package. I’ve loaded
-“testthat” for the tests we’re going to run later on the package created
-in this assignment.
+“testthat” for the tests we’re going to run later on the function
+created in this assignment.
 
 # Exercises 1 and 2: Make and Document a Function
 
@@ -102,7 +102,8 @@ group_then_sumz <- function(data, group_var, count_var) {
     group_by({{ group_var }}) %>%
     drop_na({{ count_var }}) %>%
     summarize(n_distinct = n_distinct({{ count_var }})) %>%
-    arrange(desc(n_distinct))
+    arrange(desc(n_distinct)) 
+as_tibble(table)
 print(table)
 }
 ```
@@ -113,6 +114,16 @@ to group by), and “count_var” (name of the column you want to count
 unique observations for). It outputs a tibble that shows you unique
 counts for your variable of interest grouped by your other variable of
 interest, and sorts the counts from high to low.
+
+I’ve dealt with potential NA values by using **drop_na()** on both the
+variable we want to group by and the one we want to summarize unique
+observations for. I’ve also included **arrange()** and used **desc()**
+to sort the values of the counted unique observations from high to low,
+so that the table is organized in a useful way.
+
+I’ve put the workflow itself into a new object created by the function,
+“table” which I coerce into a tibble with **as_tibble** at the end and
+then display the table with our results on the screen using **print()**.
 
 # Exercise 3: Examples
 
@@ -220,7 +231,7 @@ expect_is(table, "function")
 })
 ```
 
-    ## Test passed 😀
+    ## Test passed 😸
 
 The test passes, so we have confirmed that **group_then_sumz()** and
 “table” are both functions.
@@ -305,7 +316,7 @@ expect_no_error(group_then_sumz(vancouver_trees, neighbourhood_name, on_street_b
     ##  9 RILEY PARK                       61
     ## 10 ARBUTUS-RIDGE                    60
     ## # ℹ 12 more rows
-    ## Test passed 😀
+    ## Test passed 😸
 
 I’ve tested the function with four different inputs: vectors with no
 NA’s (neighbourhood_name and species_name), vector with NA’s
@@ -314,20 +325,60 @@ NA’s (neighbourhood_name and species_name), vector with NA’s
 variables that we might be interested in generate an error when the
 function is run.
 
-## Test 3: expect_output()
+## Test 3: expect_equal()
 
-We can use the test function **expect_output()** to test that our
-function is outputting the “table” tibble, as we want it to.
+We can use the test function **expect_equal()** to test that our new
+function **group_then_sumz()** creates an output that is equivalent to
+running the **group_by()** %\>% **summarize()** workflow manually.
 
 ``` r
-test_that("function produces output table", {
-expect_output(
-  group_then_sumz(vancouver_trees, neighbourhood_name, species_name),
-  regexp = NULL
-)
+test3_manual <- vancouver_trees %>%
+  drop_na(neighbourhood_name) %>%
+  group_by(neighbourhood_name) %>%
+  drop_na(species_name) %>%
+  summarize(n_distinct = n_distinct(species_name)) %>%
+  arrange(desc(n_distinct))
+
+test3_function <- group_then_sumz(vancouver_trees, neighbourhood_name, species_name)
+```
+
+    ## # A tibble: 22 × 2
+    ##    neighbourhood_name       n_distinct
+    ##    <chr>                         <int>
+    ##  1 HASTINGS-SUNRISE                176
+    ##  2 KITSILANO                       171
+    ##  3 RENFREW-COLLINGWOOD             170
+    ##  4 DUNBAR-SOUTHLANDS               161
+    ##  5 KENSINGTON-CEDAR COTTAGE        159
+    ##  6 RILEY PARK                      154
+    ##  7 SHAUGHNESSY                     150
+    ##  8 SUNSET                          147
+    ##  9 GRANDVIEW-WOODLAND              146
+    ## 10 MARPOLE                         139
+    ## # ℹ 12 more rows
+
+To test this, I will first store the manual workflow in a new object
+called “test3_manual”. I’ll continue using the “vancouver_trees” dataset
+as an example and I’ll group by neighbourhood and summarize number of
+distinct species. Then, I’ll store the function that is intended to do
+the same thing in the new object “test3_function”. I’ll use
+vancouver_trees, neighbourhood_name, and species_name as the arguments
+as they correspond to the dataset we’re using and the variables we’re
+trying to group by and then summarize.
+
+Now, we can put “test3_function” (the new object) and “test3_manual”
+(the expected object) as arguments into the **expect_equal()** function
+within **test_that()**. **Expect_equal()** compares a computation to a
+reference value. We are expecting “test3_function” to match the
+reference, “test3_manual”.
+
+``` r
+test_that("running the function is equivalent to the manual workflow", {
+expect_equal(test3_function, test3_manual)
 })
 ```
 
-    ## Test passed 🎉
+    ## Test passed 😸
 
-The test is passed, indicating that output is produced.
+The test is passed, indicating that using the function produces the same
+result as the manual workflow.
